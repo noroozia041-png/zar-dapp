@@ -1,24 +1,27 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-import { Web3Provider } from './providers';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import Providers from "./providers";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Zar Protocol | Decentralized Asset-Backed Protocol',
-  description: 'Mint & Redeem Zar Tokens backed by real-world assets on Arbitrum One',
+  title: "Zar Protocol - Institutional Gold Yield",
+  description:
+    "Stake PAXG, mint ZAR, and earn real yield on Arbitrum. Institutional-grade gold-backed DeFi protocol.",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="fa" dir="rtl">
-      <body className={inter.className}>
-        <Web3Provider>{children}</Web3Provider>
+    <html lang="en">
+      <body
+        className={`${inter.className} bg-slate-950 text-slate-200 antialiased`}
+      >
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

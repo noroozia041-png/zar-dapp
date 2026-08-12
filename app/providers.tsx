@@ -1,31 +1,33 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { WagmiProvider, http } from 'wagmi';
-import { arbitrum } from 'wagmi/chains';
-import { RainbowKitProvider, getDefaultConfig, darkTheme } from '@rainbow-me/rainbowkit';
-import '@rainbow-me/rainbowkit/styles.css';
+import { WagmiProvider, createConfig, http } from "wagmi";
+import { arbitrum } from "wagmi/chains";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { injected, walletConnect, coinbaseWallet } from "wagmi/connectors";
 
-const config = getDefaultConfig({
-  appName: 'Zar Protocol',
-  projectId: 'zar_protocol_arbitrum_mainnet', // شناسه عمومی دمو
+// شناسه پروژه WalletConnect را از https://cloud.walletconnect.com دریافت کنید
+// و در فایل .env.local قرار دهید: NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=...
+const WALLETCONNECT_PROJECT_ID =
+  process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "YOUR_PROJECT_ID";
+
+const config = createConfig({
   chains: [arbitrum],
+  connectors: [
+    injected({ shimDisconnect: true }),
+    walletConnect({ projectId: WALLETCONNECT_PROJECT_ID }),
+    coinbaseWallet(),
+  ],
   transports: {
-    [arbitrum.id]: http('https://1rpc.io/arb'),
+    [arbitrum.id]: http(),
   },
 });
 
 const queryClient = new QueryClient();
 
-export function Web3Provider({ children }: { children: React.ReactNode }) {
+export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider theme={darkTheme({ accentColor: '#d97706' })}>
-          {children}
-        </RainbowKitProvider>
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </WagmiProvider>
   );
 }
